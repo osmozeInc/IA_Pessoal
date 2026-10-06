@@ -1,15 +1,14 @@
 import json
 import pyaudio
 import ctypes
-from vosk import Model, KaldiRecognizer, SetLogLevel
+from vosk import KaldiRecognizer, SetLogLevel
 
 
-def wake_word(WW):
-    modelo_stt = Model("modelo_vosk")
-    
+def wake_word(WW, modelo_stt):
     reconhecedor = KaldiRecognizer(modelo_stt, 16000, f'["{WW}", "[unk]"]')
     
     audio = pyaudio.PyAudio()
+    
     stream = audio.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=4096)
     stream.start_stream()
     
@@ -24,7 +23,7 @@ def wake_word(WW):
                 texto_captado = resultado.get("text", "")
                 
                 if WW in texto_captado:
-                    print(f"\n{AZUL}[KWS]{RESET} '{WW}' detectado!")
+                    print(f"{AZUL}[KWS]{RESET} '{WW}' detectado!")
                     stream.stop_stream()
                     stream.close()
                     audio.terminate()
